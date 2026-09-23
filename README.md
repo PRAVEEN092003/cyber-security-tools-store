@@ -74,9 +74,8 @@ Admin Login → Dashboard → Manage Products → Manage Categories → Manage C
 
 🌐 Live Demo
 
-Live Demo: Coming Soon
+Live Demo: https://cyber-security-tools-store.onrender.com
 
-GitHub: Comming soom....
 
 🎯 Project Objective
 
