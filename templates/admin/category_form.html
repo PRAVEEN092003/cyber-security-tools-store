@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Category — Admin Console{% endblock %}
+{% block content %}
+<div class="container py-4 position-relative z-2" style="max-width: 600px;">
+
+  <!-- Header -->
+  <div class="mb-4">
+    <div class="hero-pill-badge mb-2 py-1 px-3">
+      <i class="bi bi-tag-fill"></i>
+      <span>CATEGORY CONFIGURATION</span>
+    </div>
+    <h1 class="h2 fw-bold text-white mb-1">{{ action }} Security Category</h1>
+    <p class="text-secondary small mb-0">Define category title and classification details for tools inventory.</p>
+  </div>
+
+  <div class="cs-glass-card p-4 p-md-5">
+    <form method="POST" id="categoryForm">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="mb-3">
+        <label for="catName" class="form-label font-monospace small text-cs-accent">
+          CATEGORY DOMAIN NAME <span class="text-danger">*</span>
+        </label>
+        <input type="text" class="form-control" id="catName" name="name"
+               value="{{ form_name }}" required autofocus placeholder="e.g. Threat Intelligence">
+      </div>
+
+      <div class="mb-4">
+        <label for="catDesc" class="form-label font-monospace small text-cs-accent">DOMAIN DESCRIPTION</label>
+        <textarea class="form-control" id="catDesc" name="description" rows="3"
+                  placeholder="Optional technical summary of software tools in this category...">{{ form_description }}</textarea>
+      </div>
+
+      <div class="d-flex gap-3 pt-3 border-top border-secondary border-opacity-25">
+        <button type="submit" class="btn btn-cs" id="saveCategoryBtn">
+          <i class="bi bi-check-circle-fill me-1"></i>Commit {{ action }} Category
+        </button>
+        <a href="{{ url_for('admin.categories') }}" class="btn btn-outline-cs" id="cancelCategoryBtn">
+          Abort
+        </a>
+      </div>
+
+    </form>
+  </div>
+
+</div>
+{% endblock %}

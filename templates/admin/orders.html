@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Order Ledger — Admin Console{% endblock %}
+{% block content %}
+<div class="container py-4 position-relative z-2">
+
+  <!-- Header Banner -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <div class="hero-pill-badge mb-2 py-1 px-3">
+        <i class="bi bi-receipt"></i>
+        <span>TRANSACTION MANAGEMENT</span>
+      </div>
+      <h1 class="h2 fw-bold text-white mb-1">Customer Order Ledger</h1>
+      <p class="text-secondary small mb-0">Inspect customer order requests, fulfill license deliveries, and update provisioning statuses.</p>
+    </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-cs" id="ordersBackDash">
+      <i class="bi bi-speedometer2 me-1"></i>SOC Dashboard
+    </a>
+  </div>
+
+  {% if orders %}
+  <div class="cs-glass-card p-3 p-md-4 mb-4">
+    <div class="table-responsive">
+      <table class="table align-middle mb-0" id="allOrdersTable">
+        <thead>
+          <tr>
+            <th style="width: 90px;">Order ID</th>
+            <th>Customer Name</th>
+            <th>Operator Email</th>
+            <th>Timestamp</th>
+            <th class="text-end">Total Amount</th>
+            <th>Current Status</th>
+            <th style="width: 110px;" class="text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in orders %}
+          <tr id="orderRow{{ o.id }}">
+            <td class="font-monospace fw-bold text-white">#{{ o.id }}</td>
+            <td class="text-white fw-medium">{{ o.customer_name }}</td>
+            <td class="text-secondary font-monospace small">{{ o.customer_email }}</td>
+            <td class="font-monospace text-secondary small">{{ o.order_date }}</td>
+            <td class="text-end font-monospace text-cs-accent fw-bold">₹{{ "%.2f"|format(o.total_amount) }}</td>
+            <td>
+              <span class="badge-status badge-status-{{ o.status|lower }}">
+                {{ o.status }}
+              </span>
+            </td>
+            <td class="text-end">
+              <a href="{{ url_for('admin.order_detail', order_id=o.id) }}"
+                 class="btn btn-outline-cs btn-sm py-1 px-2" id="viewOrder{{ o.id }}" title="Inspect Order">
+                <i class="bi bi-eye me-1"></i>Manage
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="cs-glass-card p-5 text-center my-4">
+    <div class="text-cs-accent fs-1 mb-3"><i class="bi bi-receipt"></i></div>
+    <h3 class="text-white fw-bold">Order Ledger Empty</h3>
+    <p class="text-secondary mb-0">No order records found in the store database.</p>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

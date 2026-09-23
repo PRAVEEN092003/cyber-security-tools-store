@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block title %}Checkout &amp; Order Authorization — CYBER SECURITY TOOLS{% endblock %}
+{% block content %}
+<div class="container py-4 position-relative z-2">
+
+  <!-- Header -->
+  <div class="mb-4">
+    <div class="hero-pill-badge mb-2 py-1 px-3">
+      <i class="bi bi-shield-check"></i>
+      <span>TRANSACTION AUTHORIZATION</span>
+    </div>
+    <h1 class="h2 fw-bold text-white mb-1">Checkout &amp; Provisioning</h1>
+    <p class="text-secondary small mb-0">Confirm license allocations and finalize your procurement order.</p>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Order Summary Column -->
+    <div class="col-lg-7">
+      <div class="cs-glass-card p-4 mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-receipt text-cs-accent fs-5"></i>
+            <h5 class="text-white fw-bold mb-0">Order Allocation Review</h5>
+          </div>
+          <span class="badge bg-secondary bg-opacity-25 text-cs-accent font-monospace small">
+            {{ items|length }} ITEM{{ 'S' if items|length != 1 else '' }}
+          </span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Software Tool</th>
+                <th class="text-center">Qty</th>
+                <th class="text-end">Unit Price</th>
+                <th class="text-end">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in items %}
+              <tr>
+                <td class="text-white fw-medium">{{ item.name }}</td>
+                <td class="text-center font-monospace text-secondary">{{ item.quantity }}</td>
+                <td class="text-end font-monospace text-secondary">₹{{ "%.2f"|format(item.price) }}</td>
+                <td class="text-end font-monospace text-cs-accent fw-bold">₹{{ "%.2f"|format(item.subtotal) }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot>
+              <tr style="border-top: 2px solid var(--cs-border);">
+                <td colspan="3" class="text-end fw-bold font-monospace text-secondary pt-3">TOTAL DUE:</td>
+                <td class="text-end fw-bold fs-4 text-cs-accent font-monospace pt-3">₹{{ "%.2f"|format(total) }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Details & Payment Column -->
+    <div class="col-lg-5">
+
+      <!-- Customer Identity Card -->
+      <div class="cs-glass-card p-4 mb-4">
+        <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+          <i class="bi bi-person-badge-fill text-cs-accent fs-5"></i>
+          <h5 class="text-white fw-bold mb-0">Authorized Licensee</h5>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+          <div class="brand-icon text-cs-accent fs-4" style="width:48px;height:48px;">
+            <i class="bi bi-shield-lock-fill"></i>
+          </div>
+          <div>
+            <div class="text-white fw-bold fs-6">{{ user.name }}</div>
+            <div class="text-secondary small font-monospace">{{ user.email }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Authorization Card -->
+      <div class="cs-glass-card p-4">
+        <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+          <i class="bi bi-wallet2 text-cs-accent fs-5"></i>
+          <h5 class="text-white fw-bold mb-0">Payment Protocol</h5>
+        </div>
+
+        <form method="POST" action="{{ url_for('cart.checkout') }}" id="checkoutForm">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+          <p class="text-secondary small mb-3">
+            <i class="bi bi-info-circle me-1 text-info"></i>Demonstration store environment. No real funds or credit card required.
+          </p>
+
+          <div class="mb-4">
+            <label class="form-label text-cs-accent font-monospace small mb-2">SELECT PROTOCOL <span class="text-danger">*</span></label>
+
+            <!-- Option 1: COD / Invoice -->
+            <label class="cs-glass-card p-3 d-flex align-items-center gap-3 mb-2 cursor-pointer w-100" style="cursor: pointer;">
+              <input class="form-check-input mt-0" type="radio" name="payment_method"
+                     id="payCOD" value="Cash on Delivery" checked>
+              <div class="d-flex align-items-center gap-2 flex-grow-1">
+                <i class="bi bi-file-earmark-text text-cs-accent fs-4"></i>
+                <div>
+                  <div class="text-white fw-bold small">Direct Corporate Invoice / COD</div>
+                  <div class="text-secondary" style="font-size: 0.75rem;">Pay upon license verification &amp; delivery</div>
+                </div>
+              </div>
+            </label>
+
+            <!-- Option 2: Demo Instant -->
+            <label class="cs-glass-card p-3 d-flex align-items-center gap-3 cursor-pointer w-100" style="cursor: pointer;">
+              <input class="form-check-input mt-0" type="radio" name="payment_method"
+                     id="payDemo" value="Demo Payment">
+              <div class="d-flex align-items-center gap-2 flex-grow-1">
+                <i class="bi bi-credit-card-2-front text-success fs-4"></i>
+                <div>
+                  <div class="text-white fw-bold small">Instant Demo Payment</div>
+                  <div class="text-secondary" style="font-size: 0.75rem;">Simulated instant payment clearance</div>
+                </div>
+              </div>
+            </label>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center py-2 mb-4 border-top border-bottom border-secondary border-opacity-25 font-monospace">
+            <span class="text-secondary small">AMOUNT TO CHARGE:</span>
+            <span class="fw-bold fs-4 text-cs-accent">₹{{ "%.2f"|format(total) }}</span>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-cs btn-lg" id="placeOrderBtn">
+              <i class="bi bi-shield-check me-1"></i>Authorize &amp; Place Order
+            </button>
+            <a href="{{ url_for('cart.cart_view') }}" class="btn btn-outline-cs" id="backToCart">
+              <i class="bi bi-arrow-left me-1"></i>Return to Cart
+            </a>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}

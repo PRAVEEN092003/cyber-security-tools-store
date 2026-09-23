@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}400 Bad Request — Cyber Security Tools Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="cs-glass-card p-5 text-center position-relative overflow-hidden">
+                <div class="mb-4">
+                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 80px; height: 80px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #f59e0b; font-size: 2.25rem;">
+                        <i class="bi bi-shield-slash"></i>
+                    </span>
+                </div>
+                <div class="text-uppercase tracking-wider small text-warning fw-semibold mb-2">Protocol Anomaly Detected</div>
+                <h1 class="display-3 fw-bold text-warning mb-2" style="font-family: var(--font-heading);">400</h1>
+                <h2 class="h4 text-light mb-3">Bad Request / Invalid Token</h2>
+                <p class="text-muted mb-4 small">
+                    The security gateway could not validate the telemetry payload or the CSRF session token has expired. Please reload and re-authenticate.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ url_for('index') }}" class="btn btn-cs" id="badRequestBackHome">
+                        <i class="bi bi-house me-1"></i>Return to Command Center
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% block title %}Inspect Order #{{ order.id }} — Admin Console{% endblock %}
+{% block content %}
+<div class="container py-4 position-relative z-2">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb font-monospace small">
+      <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}" class="text-secondary">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="{{ url_for('admin.orders') }}" class="text-secondary">Orders</a></li>
+      <li class="breadcrumb-item active text-cs-accent" aria-current="page">Order #{{ order.id }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-4">
+
+    <!-- Order Items Column -->
+    <div class="col-lg-8">
+      <div class="cs-glass-card p-4 mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary border-opacity-25 gap-2">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-receipt text-cs-accent fs-5"></i>
+            <h5 class="text-white fw-bold mb-0">Order #{{ order.id }} Manifest</h5>
+          </div>
+          <span class="text-secondary font-monospace small">{{ order.order_date }}</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table align-middle mb-0" id="orderItemsTable">
+            <thead>
+              <tr>
+                <th style="width: 55px;"></th>
+                <th>Software Tool</th>
+                <th class="text-center">Qty</th>
+                <th class="text-end">Unit Price</th>
+                <th class="text-end">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in items %}
+              <tr>
+                <td>
+                  <div class="rounded overflow-hidden d-flex align-items-center justify-content-center"
+                       style="width: 44px; height: 44px; background: rgba(5,8,17,0.8); border: 1px solid rgba(0,240,255,0.15);">
+                    {% if item.product_image %}
+                    <img src="{{ url_for('static', filename='images/products/' ~ item.product_image) }}"
+                         alt="{{ item.product_name }}"
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                    <i class="bi bi-shield-lock text-cs-accent fs-5"></i>
+                    {% endif %}
+                  </div>
+                </td>
+                <td>
+                  <a href="{{ url_for('store.product_detail', prod_id=item.product_id) }}"
+                     class="text-white fw-bold text-decoration-none">{{ item.product_name }}</a>
+                </td>
+                <td class="text-center font-monospace text-secondary">{{ item.quantity }}</td>
+                <td class="text-end font-monospace text-secondary">₹{{ "%.2f"|format(item.price) }}</td>
+                <td class="text-end font-monospace text-cs-accent fw-bold">₹{{ "%.2f"|format(item.subtotal) }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot>
+              <tr style="border-top: 2px solid var(--cs-border);">
+                <td colspan="4" class="text-end fw-bold font-monospace text-secondary pt-3">TRANSACTION SUM:</td>
+                <td class="text-end fw-bold fs-4 text-cs-accent font-monospace pt-3" id="adminOrderTotal">
+                  ₹{{ "%.2f"|format(order.total_amount) }}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar: Customer & Status Controls -->
+    <div class="col-lg-4">
+
+      <!-- Customer Profile Card -->
+      <div class="cs-glass-card p-4 mb-4">
+        <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+          <i class="bi bi-person-circle text-cs-accent fs-5"></i>
+          <h6 class="text-white fw-bold mb-0">Buyer Dossier</h6>
+        </div>
+        <div>
+          <div class="text-white fw-bold fs-6 mb-1" id="orderCustomerName">{{ order.customer_name }}</div>
+          <div class="text-secondary small font-monospace mb-3" id="orderCustomerEmail">{{ order.customer_email }}</div>
+          <a href="{{ url_for('admin.customer_detail', user_id=order.customer_id) }}"
+             class="btn btn-outline-cs btn-sm w-100" id="viewCustomerBtn">
+            <i class="bi bi-person-lines-fill me-1"></i>Inspect Customer Profile
+          </a>
+        </div>
+      </div>
+
+      <!-- Order Status Transition Card -->
+      <div class="cs-glass-card p-4">
+        <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+          <i class="bi bi-arrow-repeat text-cs-accent fs-5"></i>
+          <h6 class="text-white fw-bold mb-0">Update Status Protocol</h6>
+        </div>
+
+        <div class="mb-3">
+          <div class="text-secondary small font-monospace mb-1">CURRENT STATUS:</div>
+          <span class="badge-status badge-status-{{ order.status|lower }}" id="currentStatus">
+            {{ order.status }}
+          </span>
+        </div>
+
+        <form method="POST"
+              action="{{ url_for('admin.order_update_status', order_id=order.id) }}"
+              id="statusUpdateForm">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+          <div class="mb-3">
+            <label for="statusSelect" class="form-label font-monospace small text-cs-accent">TRANSITION TO</label>
+            <select class="form-select font-monospace" name="status" id="statusSelect" required>
+              {% for s in statuses %}
+              <option value="{{ s }}" {% if s == order.status %}selected{% endif %}>{{ s }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-cs w-100" id="updateStatusBtn">
+            <i class="bi bi-check2-circle me-1"></i>Apply Status Transition
+          </button>
+        </form>
+      </div>
+
+      <div class="mt-3">
+        <a href="{{ url_for('admin.orders') }}" class="btn btn-outline-cs btn-sm w-100" id="backToOrdersBtn">
+          <i class="bi bi-arrow-left me-1"></i>Back to Orders Ledger
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

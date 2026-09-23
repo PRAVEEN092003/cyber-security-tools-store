@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% block title %}Security Tools Catalogue — CYBER SECURITY TOOLS{% endblock %}
+{% block content %}
+<div class="container py-4 position-relative z-2">
+
+  <!-- Header Banner -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <div class="hero-pill-badge mb-2 py-1 px-3">
+        <i class="bi bi-shield-shaded"></i>
+        <span>VERIFIED REPOSITORY</span>
+      </div>
+      <h1 class="h2 fw-bold text-white mb-1">Security Tools Catalogue</h1>
+      <p class="text-secondary small mb-0">Browse and deploy field-tested cybersecurity software and licenses.</p>
+    </div>
+    <div>
+      <span class="badge bg-secondary bg-opacity-25 border border-secondary text-cs-accent font-monospace px-3 py-2">
+        <i class="bi bi-cpu me-1"></i>{{ products|length }} UNIT{{ 'S' if products|length != 1 else '' }} ACTIVE
+      </span>
+    </div>
+  </div>
+
+  <!-- Cyber Recon Search & Filter HUD -->
+  <div class="cs-glass-card p-3 p-md-4 mb-4" style="border-color: rgba(0, 240, 255, 0.2);">
+    <form method="GET" action="{{ url_for('store.product_list') }}" id="filterForm">
+      <div class="row g-3 align-items-end">
+
+        <!-- Search Input -->
+        <div class="col-xl-4 col-lg-3 col-md-6">
+          <label for="searchInput" class="form-label text-cs-accent font-monospace small">
+            <i class="bi bi-search me-1"></i>QUERY DATABASE
+          </label>
+          <div class="input-group">
+            <span class="input-group-text bg-transparent border-end-0 text-secondary" style="border-color: rgba(0, 240, 255, 0.18);">
+              <i class="bi bi-terminal"></i>
+            </span>
+            <input type="text" class="form-control border-start-0 ps-0" id="searchInput" name="q"
+                   value="{{ search }}" placeholder="Search by tool name...">
+          </div>
+        </div>
+
+        <!-- Category Dropdown -->
+        <div class="col-xl-3 col-lg-3 col-md-6">
+          <label for="categoryFilter" class="form-label text-cs-accent font-monospace small">
+            <i class="bi bi-tags me-1"></i>CATEGORY
+          </label>
+          <select class="form-select" id="categoryFilter" name="category">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}"
+              {% if selected_category == cat.id|string %}selected{% endif %}>
+              {{ cat.name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Min Price -->
+        <div class="col-xl-2 col-lg-2 col-6">
+          <label for="minPrice" class="form-label text-cs-accent font-monospace small">
+            <i class="bi bi-currency-rupee me-1"></i>MIN PRICE
+          </label>
+          <input type="number" min="0" step="0.01" class="form-control" id="minPrice"
+                 name="min_price" value="{{ min_price }}" placeholder="0.00">
+        </div>
+
+        <!-- Max Price -->
+        <div class="col-xl-2 col-lg-2 col-6">
+          <label for="maxPrice" class="form-label text-cs-accent font-monospace small">
+            <i class="bi bi-currency-rupee me-1"></i>MAX PRICE
+          </label>
+          <input type="number" min="0" step="0.01" class="form-control" id="maxPrice"
+                 name="max_price" value="{{ max_price }}" placeholder="Any">
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="col-xl-1 col-lg-2 col-12 d-flex gap-2">
+          <button type="submit" class="btn btn-cs flex-grow-1" id="applyFilterBtn" title="Execute Query">
+            <i class="bi bi-funnel-fill"></i>
+          </button>
+          {% if search or selected_category or min_price or max_price %}
+          <a href="{{ url_for('store.product_list') }}" class="btn btn-outline-cs flex-grow-1" id="clearFilterBtn"
+             title="Clear Query"><i class="bi bi-x-lg"></i></a>
+          {% endif %}
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <!-- Product Grid -->
+  {% if products %}
+  <div class="row g-4">
+    {% for p in products %}
+    <div class="col-sm-6 col-lg-4">
+      <div class="cs-product-card" id="productCard{{ p.id }}">
+
+        <!-- Top Status Badge -->
+        <div class="cs-product-badge">
+          {% if p.stock > 0 %}
+          <span class="badge bg-success bg-opacity-25 border border-success text-success font-monospace px-2 py-1">
+            <i class="bi bi-check-circle-fill me-1"></i>IN STOCK
+          </span>
+          {% else %}
+          <span class="badge bg-danger bg-opacity-25 border border-danger text-danger font-monospace px-2 py-1">
+            <i class="bi bi-x-circle-fill me-1"></i>OUT OF STOCK
+          </span>
+          {% endif %}
+        </div>
+
+        <!-- Product Image / Hologram Preview -->
+        <div class="cs-product-media">
+          {% if p.image %}
+          <img src="{{ url_for('static', filename='images/products/' ~ p.image) }}"
+               alt="{{ p.name }}"
+               loading="lazy"
+               onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'cs-product-placeholder-icon\'><i class=\'bi bi-shield-lock\'></i></div>';">
+          {% else %}
+          <div class="cs-product-placeholder-icon">
+            <i class="bi bi-shield-lock"></i>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Card Body -->
+        <div class="cs-product-body">
+          <div class="mb-2 d-flex justify-content-between align-items-center">
+            <span class="badge bg-secondary bg-opacity-25 border border-secondary text-cs-accent small font-monospace">
+              {{ p.category_name or 'Uncategorised' }}
+            </span>
+            {% if p.license %}
+            <span class="text-secondary small font-monospace">{{ p.license }}</span>
+            {% endif %}
+          </div>
+
+          <h5 class="text-white fw-bold mb-2">{{ p.name }}</h5>
+
+          {% if p.description %}
+          <p class="text-secondary small flex-grow-1 mb-3">
+            {{ p.description[:110] }}{% if p.description|length > 110 %}…{% endif %}
+          </p>
+          {% else %}
+          <p class="text-muted small flex-grow-1 mb-3 fst-italic">Standard security utility specifications provided.</p>
+          {% endif %}
+
+          <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-25 mt-auto">
+            <div>
+              <div class="text-secondary small font-monospace">PRICE</div>
+              <div class="cs-product-price">₹{{ "%.2f"|format(p.price) }}</div>
+            </div>
+            {% if p.stock > 0 %}
+            <span class="text-secondary small font-monospace">{{ p.stock }} units</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Card Footer Actions -->
+        <div class="p-3 pt-0 bg-transparent border-0 d-flex gap-2">
+          <a href="{{ url_for('store.product_detail', prod_id=p.id) }}"
+             class="btn btn-outline-cs flex-grow-1 btn-sm" id="viewProduct{{ p.id }}">
+            <i class="bi bi-eye me-1"></i>Specs &amp; Intel
+          </a>
+          {% if current_user and current_user['role'] == 'customer' and p.stock > 0 %}
+          <form method="POST" action="{{ url_for('cart.cart_add', product_id=p.id) }}"
+                id="quickAddForm{{ p.id }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="quantity" value="1">
+            <button type="submit" class="btn btn-cs btn-sm" id="quickAdd{{ p.id }}"
+                    title="Add to Cart">
+              <i class="bi bi-cart-plus"></i>
+            </button>
+          </form>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <!-- Empty State -->
+  <div class="cs-glass-card p-5 text-center my-4">
+    <div class="text-secondary fs-1 mb-3"><i class="bi bi-shield-x"></i></div>
+    <h4 class="text-white fw-bold">No Security Tools Found</h4>
+    <p class="text-secondary small mb-3">No software or licenses matched your active recon filters.</p>
+    {% if search or selected_category or min_price or max_price %}
+    <a href="{{ url_for('store.product_list') }}" class="btn btn-outline-cs btn-sm">
+      <i class="bi bi-arrow-clockwise me-1"></i>Reset All Filters
+    </a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}500 Internal Server Error — Cyber Security Tools Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="cs-glass-card p-5 text-center position-relative overflow-hidden" style="border-color: rgba(239, 68, 68, 0.4);">
+                <div class="mb-4">
+                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; font-size: 2.25rem;">
+                        <i class="bi bi-exclamation-octagon"></i>
+                    </span>
+                </div>
+                <div class="text-uppercase tracking-wider small text-danger fw-semibold mb-2">Core Kernel Fault</div>
+                <h1 class="display-3 fw-bold text-danger mb-2" style="font-family: var(--font-heading); text-shadow: 0 0 20px rgba(239, 68, 68, 0.4);">500</h1>
+                <h2 class="h4 text-light mb-3">Internal Server Error</h2>
+                <p class="text-muted mb-4 small">
+                    An unexpected condition was encountered by the core daemon. Incident diagnostics have been safely logged. Please retry shortly.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ url_for('index') }}" class="btn btn-cs" id="serverErrorBackHome">
+                        <i class="bi bi-house me-1"></i>Return to Command Center
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

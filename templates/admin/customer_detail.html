@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% block title %}Operator Dossier — {{ customer.name }} — Admin{% endblock %}
+{% block content %}
+<div class="container py-4 position-relative z-2">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb font-monospace small">
+      <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}" class="text-secondary">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="{{ url_for('admin.customers') }}" class="text-secondary">Customers</a></li>
+      <li class="breadcrumb-item active text-cs-accent" aria-current="page">{{ customer.name }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-4">
+
+    <!-- Customer Profile Card -->
+    <div class="col-lg-4">
+      <div class="cs-glass-card p-4" id="customerProfileCard">
+        <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+          <i class="bi bi-person-bounding-box text-cs-accent fs-5"></i>
+          <h5 class="text-white fw-bold mb-0">Operator Dossier</h5>
+        </div>
+
+        <div class="text-center py-3 mb-3 border-bottom border-secondary border-opacity-25">
+          <div class="brand-icon mx-auto mb-2" style="width: 54px; height: 54px; font-size: 1.6rem;">
+            <i class="bi bi-person-fill"></i>
+          </div>
+          <h5 class="text-white fw-bold mb-1" id="customerName">{{ customer.name }}</h5>
+          <span class="badge bg-secondary bg-opacity-25 border border-secondary text-cs-accent font-monospace small">
+            ID: #{{ customer.id }} // VERIFIED CLIENT
+          </span>
+        </div>
+
+        <table class="table table-borderless mb-0">
+          <tbody>
+            <tr>
+              <th scope="row" class="text-secondary font-monospace small ps-0">EMAIL</th>
+              <td class="text-white font-monospace small" id="customerEmail">{{ customer.email }}</td>
+            </tr>
+            <tr>
+              <th scope="row" class="text-secondary font-monospace small ps-0">ENROLLED</th>
+              <td class="text-secondary font-monospace small" id="customerSince">{{ customer.created_at }}</td>
+            </tr>
+            <tr>
+              <th scope="row" class="text-secondary font-monospace small ps-0">TOTAL ORDERS</th>
+              <td id="customerOrderCount">
+                <span class="badge bg-secondary bg-opacity-25 border border-secondary text-cs-accent font-monospace">
+                  {{ orders|length }}
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="text-secondary font-monospace small ps-0">TOTAL VOLUME</th>
+              <td id="customerTotalSpent" class="text-cs-accent font-monospace fw-bold fs-6">
+                ₹{{ "%.2f"|format(orders | sum(attribute='total_amount')) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Order History Ledger -->
+    <div class="col-lg-8">
+      <div class="cs-glass-card p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-clock-history text-cs-accent fs-5"></i>
+            <h5 class="text-white fw-bold mb-0">Procurement History</h5>
+          </div>
+          <span class="badge bg-secondary bg-opacity-25 text-secondary font-monospace small">
+            {{ orders|length }} RECORD{{ 'S' if orders|length != 1 else '' }}
+          </span>
+        </div>
+
+        {% if orders %}
+        <div class="table-responsive">
+          <table class="table align-middle mb-0" id="customerOrdersTable">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Timestamp</th>
+                <th class="text-end">Total Amount</th>
+                <th>Status</th>
+                <th style="width: 100px;" class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for o in orders %}
+              <tr id="custOrderRow{{ o.id }}">
+                <td class="font-monospace fw-bold text-white">#{{ o.id }}</td>
+                <td class="font-monospace text-secondary small">{{ o.order_date }}</td>
+                <td class="text-end font-monospace text-cs-accent fw-bold">₹{{ "%.2f"|format(o.total_amount) }}</td>
+                <td>
+                  <span class="badge-status badge-status-{{ o.status|lower }}">
+                    {{ o.status }}
+                  </span>
+                </td>
+                <td class="text-end">
+                  <a href="{{ url_for('admin.order_detail', order_id=o.id) }}"
+                     class="btn btn-outline-cs btn-sm py-1 px-2" id="viewCustOrder{{ o.id }}" title="Inspect Order Manifest">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="p-4 text-center text-secondary small">
+          <i class="bi bi-inbox fs-3 d-block mb-2 text-muted"></i>
+          This customer has not completed any tool orders yet.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+  <div class="mt-4">
+    <a href="{{ url_for('admin.customers') }}" class="btn btn-outline-cs" id="backToCustomersBtn">
+      <i class="bi bi-arrow-left me-1"></i>Back to Customer Directory
+    </a>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Order History — CYBER SECURITY TOOLS{% endblock %}
+{% block content %}
+<div class="container py-4 position-relative z-2">
+
+  <!-- Header -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <div class="hero-pill-badge mb-2 py-1 px-3">
+        <i class="bi bi-clock-history"></i>
+        <span>PROCUREMENT LOGS</span>
+      </div>
+      <h1 class="h2 fw-bold text-white mb-1">My Orders &amp; Deployments</h1>
+      <p class="text-secondary small mb-0">Track verification status, licensing details, and order receipts.</p>
+    </div>
+    {% if orders %}
+    <span class="badge bg-secondary bg-opacity-25 border border-secondary text-cs-accent font-monospace px-3 py-2">
+      {{ orders|length }} TOTAL RECORD{{ 'S' if orders|length != 1 else '' }}
+    </span>
+    {% endif %}
+  </div>
+
+  {% if orders %}
+  <div class="cs-glass-card p-3 p-md-4 mb-4">
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Deployment Date</th>
+            <th>Status</th>
+            <th class="text-end">Total Amount</th>
+            <th style="width: 130px;" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr id="orderRow{{ order.id }}">
+            <td>
+              <span class="fw-bold font-monospace text-white">#{{ order.id }}</span>
+            </td>
+            <td class="font-monospace text-secondary small">{{ order.order_date }}</td>
+            <td>
+              <span class="badge-status badge-status-{{ order.status|lower }}">
+                {{ order.status }}
+              </span>
+            </td>
+            <td class="text-end font-monospace text-cs-accent fw-bold fs-6">
+              ₹{{ "%.2f"|format(order.total_amount) }}
+            </td>
+            <td class="text-end">
+              <a href="{{ url_for('cart.order_detail', order_id=order.id) }}"
+                 class="btn btn-outline-cs btn-sm" id="viewOrder{{ order.id }}">
+                <i class="bi bi-eye me-1"></i>View Intel
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="cs-glass-card p-5 text-center my-4">
+    <div class="text-cs-accent fs-1 mb-3"><i class="bi bi-receipt-cutoff"></i></div>
+    <h3 class="text-white fw-bold">No Orders on Record</h3>
+    <p class="text-secondary mb-4">You have not completed any tool procurement orders yet.</p>
+    <a href="{{ url_for('store.product_list') }}" class="btn btn-cs">
+      <i class="bi bi-grid-fill me-1"></i>Browse Security Arsenal
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

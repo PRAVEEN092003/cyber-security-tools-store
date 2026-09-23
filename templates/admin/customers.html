@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Customer Directory — Admin Console{% endblock %}
+{% block content %}
+<div class="container py-4 position-relative z-2">
+
+  <!-- Header Banner -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <div class="hero-pill-badge mb-2 py-1 px-3">
+        <i class="bi bi-people-fill"></i>
+        <span>SECURITY OPERATOR ROSTER</span>
+      </div>
+      <h1 class="h2 fw-bold text-white mb-1">Registered Customer Profiles</h1>
+      <p class="text-secondary small mb-0">Directory of authenticated clients, registration timestamps, and procurement volume.</p>
+    </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-cs" id="customersBackDash">
+      <i class="bi bi-speedometer2 me-1"></i>SOC Dashboard
+    </a>
+  </div>
+
+  {% if customers %}
+  <div class="cs-glass-card p-3 p-md-4 mb-4">
+    <div class="table-responsive">
+      <table class="table align-middle mb-0" id="customersTable">
+        <thead>
+          <tr>
+            <th style="width: 80px;">Client ID</th>
+            <th>Operator Name</th>
+            <th>Secure Email</th>
+            <th>Registration Date</th>
+            <th class="text-center">Total Orders</th>
+            <th style="width: 120px;" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in customers %}
+          <tr id="customerRow{{ c.id }}">
+            <td class="font-monospace text-secondary small">#{{ c.id }}</td>
+            <td class="text-white fw-bold">{{ c.name }}</td>
+            <td class="font-monospace text-secondary small">{{ c.email }}</td>
+            <td class="font-monospace text-secondary small">{{ c.created_at }}</td>
+            <td class="text-center">
+              <span class="badge bg-secondary bg-opacity-25 border border-secondary text-cs-accent font-monospace px-2 py-1">
+                {{ c.order_count }} order{{ 's' if c.order_count != 1 else '' }}
+              </span>
+            </td>
+            <td class="text-end">
+              <a href="{{ url_for('admin.customer_detail', user_id=c.id) }}"
+                 class="btn btn-outline-cs btn-sm py-1 px-2" id="viewCustomer{{ c.id }}" title="View Profile Dossier">
+                <i class="bi bi-eye me-1"></i>Dossier
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="cs-glass-card p-5 text-center my-4">
+    <div class="text-cs-accent fs-1 mb-3"><i class="bi bi-people"></i></div>
+    <h3 class="text-white fw-bold">No Registered Customers</h3>
+    <p class="text-secondary mb-0">No client accounts found in the database.</p>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

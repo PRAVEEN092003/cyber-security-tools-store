@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% block title %}Shopping Cart — CYBER SECURITY TOOLS{% endblock %}
+{% block content %}
+<div class="container py-4 position-relative z-2">
+
+  <!-- Heading -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <div class="hero-pill-badge mb-2 py-1 px-3">
+        <i class="bi bi-cart3"></i>
+        <span>SECURE PROCUREMENT</span>
+      </div>
+      <h1 class="h2 fw-bold text-white mb-1">Active Tool Cart</h1>
+      <p class="text-secondary small mb-0">Review software licenses and quantities before initiating checkout.</p>
+    </div>
+  </div>
+
+  {% if items %}
+  <div class="cs-glass-card p-3 p-md-4 mb-4" style="border-color: rgba(0, 240, 255, 0.2);">
+    <form method="POST" action="{{ url_for('cart.cart_update') }}" id="cartForm">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th style="width: 70px;"></th>
+              <th>Tool Description</th>
+              <th style="width: 140px;">Unit Price</th>
+              <th style="width: 140px;">Quantity</th>
+              <th style="width: 140px;">Subtotal</th>
+              <th style="width: 70px;" class="text-end">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+            <tr id="cartRow{{ item.product_id }}">
+
+              <!-- Thumbnail -->
+              <td>
+                <div class="rounded overflow-hidden d-flex align-items-center justify-content-center"
+                     style="width: 52px; height: 52px; background: rgba(5,8,17,0.8); border: 1px solid rgba(0,240,255,0.15);">
+                  {% if item.image %}
+                  <img src="{{ url_for('static', filename='images/products/' ~ item.image) }}"
+                       alt="{{ item.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                  {% else %}
+                  <i class="bi bi-shield-lock text-cs-accent fs-4"></i>
+                  {% endif %}
+                </div>
+              </td>
+
+              <!-- Name & Stock alert -->
+              <td>
+                <a href="{{ url_for('store.product_detail', prod_id=item.product_id) }}"
+                   class="fw-bold text-white text-decoration-none d-block mb-1">{{ item.name }}</a>
+                {% if not item.stock_ok %}
+                <span class="badge bg-danger bg-opacity-25 border border-danger text-danger font-monospace small">
+                  <i class="bi bi-exclamation-triangle-fill me-1"></i>Exceeds current stock ({{ item.stock }} available)
+                </span>
+                {% else %}
+                <span class="text-secondary small font-monospace"><i class="bi bi-check2 text-success me-1"></i>Stock Verified</span>
+                {% endif %}
+              </td>
+
+              <!-- Unit Price -->
+              <td class="font-monospace text-cs-accent fw-bold">₹{{ "%.2f"|format(item.price) }}</td>
+
+              <!-- Quantity Input -->
+              <td>
+                <input type="number"
+                       class="form-control form-control-sm font-monospace text-center"
+                       style="width: 90px;"
+                       name="quantity_{{ item.product_id }}"
+                       id="qty{{ item.product_id }}"
+                       value="{{ item.quantity }}"
+                       min="0"
+                       max="{{ item.stock }}">
+              </td>
+
+              <!-- Subtotal -->
+              <td class="font-monospace text-white fw-bold fs-6">₹{{ "%.2f"|format(item.subtotal) }}</td>
+
+              <!-- Remove Button (Using form outside row for valid HTML5 while preserving action) -->
+              <td class="text-end">
+                <button type="submit"
+                        form="removeForm{{ item.product_id }}"
+                        class="btn btn-sm btn-cyber-danger"
+                        id="removeItem{{ item.product_id }}"
+                        title="Remove Tool">
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+
+          <tfoot>
+            <tr style="border-top: 2px solid var(--cs-border);">
+              <td colspan="4" class="text-end fw-bold font-monospace text-secondary pt-3">TOTAL PROCUREMENT:</td>
+              <td class="fw-bold fs-4 text-cs-accent font-monospace pt-3">₹{{ "%.2f"|format(total) }}</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Action Bar -->
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-4 pt-3 border-top border-secondary border-opacity-25">
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-outline-cs" id="updateCartBtn">
+            <i class="bi bi-arrow-repeat me-1"></i>Update Quantities
+          </button>
+          <button type="submit" form="clearCartForm" class="btn btn-cyber-danger" id="clearCartBtn"
+                  onclick="return confirm('Clear your entire cart?')">
+            <i class="bi bi-x-circle me-1"></i>Clear Cart
+          </button>
+        </div>
+
+        <div class="d-flex gap-2">
+          <a href="{{ url_for('store.product_list') }}" class="btn btn-outline-cs" id="continueShopping">
+            <i class="bi bi-arrow-left me-1"></i>Continue Browsing
+          </a>
+          <a href="{{ url_for('cart.checkout') }}" class="btn btn-cs" id="proceedCheckout">
+            <i class="bi bi-credit-card-2-front me-1"></i>Proceed to Checkout
+          </a>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Separate remove forms outside the table for valid HTML5 form semantics -->
+  {% for item in items %}
+  <form method="POST"
+        action="{{ url_for('cart.cart_remove', product_id=item.product_id) }}"
+        id="removeForm{{ item.product_id }}" style="display:none;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  </form>
+  {% endfor %}
+
+  <form method="POST" action="{{ url_for('cart.cart_clear') }}" id="clearCartForm" style="display:none;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  </form>
+
+  {% else %}
+  <!-- Empty Cart State -->
+  <div class="cs-glass-card p-5 text-center my-4">
+    <div class="text-cs-accent fs-1 mb-3"><i class="bi bi-cart-x"></i></div>
+    <h3 class="text-white fw-bold">Your Security Cart is Empty</h3>
+    <p class="text-secondary mb-4">No tools or licenses are currently selected for deployment.</p>
+    <a href="{{ url_for('store.product_list') }}" class="btn btn-cs btn-lg">
+      <i class="bi bi-grid-fill me-1"></i>Explore Security Catalogue
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

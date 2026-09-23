@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}CYBERSEC STORE — Secure Tools. Smarter Protection.{% endblock %}
+
+{% block content %}
+
+<!-- ===========================================================================
+     HERO SECTION
+=========================================================================== -->
+<section class="cs-hero py-5 text-center position-relative z-2" id="hero">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+
+                <!-- Small Cybersecurity Icon -->
+                <div class="d-inline-flex align-items-center justify-content-center rounded-3 mb-3 p-3"
+                     style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.25); color: var(--cs-cyan); width: 56px; height: 56px;">
+                    <i class="bi bi-shield-check fs-3"></i>
+                </div>
+
+                <!-- Main Heading -->
+                <h1 class="hero-title text-white mb-3">
+                    Secure Tools.<br>
+                    <span class="text-white">Smarter Protection.</span>
+                </h1>
+
+                <!-- Short Description -->
+                <p class="hero-description text-secondary mx-auto mb-4">
+                    Explore professional cybersecurity software for network security, vulnerability assessment, encryption and system protection.
+                </p>
+
+                <!-- Primary & Secondary Buttons -->
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="{{ url_for('store.product_list') }}" class="btn btn-cs btn-lg px-4" id="heroBrowseBtn">
+                        <i class="bi bi-grid-fill me-1"></i>Browse Products
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-cs btn-lg px-4" id="heroLoginBtn">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===========================================================================
+     SECURITY TOOLS SECTION
+=========================================================================== -->
+<section class="py-5 position-relative z-2 border-top border-secondary border-opacity-10" id="security-tools">
+    <div class="container py-2">
+
+        <!-- Section Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4">
+            <div>
+                <h2 class="h3 fw-bold text-white mb-1">Security Tools</h2>
+                <p class="text-secondary small mb-0">
+                    Hand-picked security software, scanners, and threat prevention suites.
+                </p>
+            </div>
+            <div class="mt-3 mt-md-0">
+                <a href="{{ url_for('store.product_list') }}" class="btn btn-outline-cs btn-sm" id="viewAllToolsBtn">
+                    View Full Catalog <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Clean Product / Category Grid -->
+        <div class="row g-4">
+            {% if featured_products %}
+                {% for product in featured_products %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="cs-glass-card h-100 d-flex flex-column p-0 cs-card-interactive overflow-hidden">
+                        {% if product['image'] %}
+                        <div class="cs-product-media" style="height: 180px;">
+                            <img src="{{ url_for('static', filename='images/products/' ~ product['image']) }}"
+                                 alt="{{ product['name'] }}"
+                                 loading="lazy"
+                                 onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'cs-product-placeholder-icon\'><i class=\'bi bi-shield-lock\'></i></div>';">
+                        </div>
+                        {% endif %}
+                        <div class="p-4 d-flex flex-column flex-grow-1">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <span class="badge bg-secondary bg-opacity-25 text-cs-accent border border-secondary border-opacity-50 small font-monospace">
+                                    {{ product['category_name'] or 'Security Tool' }}
+                                </span>
+                                <span class="text-cs-accent fw-bold font-monospace fs-5">
+                                    ₹{{ "%.2f"|format(product['price']) }}
+                                </span>
+                            </div>
+
+                            <h3 class="h5 fw-bold text-white mb-2">{{ product['name'] }}</h3>
+
+                            <p class="text-secondary small mb-4 flex-grow-1">
+                                {{ (product['description'] or 'Professional-grade security tool engineered for modern enterprise environments and vulnerability auditing.') | truncate(110) }}
+                            </p>
+
+                            <div class="mt-auto pt-3 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                                <span class="text-muted small">
+                                    {% if product['stock'] > 0 %}
+                                        <span class="text-success"><i class="bi bi-check-circle me-1"></i>In Stock</span>
+                                    {% else %}
+                                        <span class="text-secondary"><i class="bi bi-dash-circle me-1"></i>Out of Stock</span>
+                                    {% endif %}
+                                </span>
+                                <a href="{{ url_for('store.product_detail', prod_id=product['id']) }}" class="btn btn-outline-cs btn-sm">
+                                    View Tool <i class="bi bi-chevron-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Fallback clean category cards if no products loaded -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="cs-glass-card h-100 p-4 d-flex flex-column cs-card-interactive">
+                        <div class="brand-icon text-cs-accent mb-3">
+                            <i class="bi bi-diagram-3-fill"></i>
+                        </div>
+                        <h3 class="h5 fw-bold text-white mb-2">Network Security</h3>
+                        <p class="text-secondary small mb-3 flex-grow-1">
+                            Firewall auditing, flow visualization, packet analysis, and intrusion prevention.
+                        </p>
+                        <a href="{{ url_for('store.product_list') }}" class="btn btn-outline-cs btn-sm mt-auto">Browse</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="cs-glass-card h-100 p-4 d-flex flex-column cs-card-interactive">
+                        <div class="brand-icon text-warning mb-3" style="border-color: rgba(255,179,0,0.4); background: rgba(255,179,0,0.1);">
+                            <i class="bi bi-shield-slash-fill"></i>
+                        </div>
+                        <h3 class="h5 fw-bold text-white mb-2">Vulnerability Scan</h3>
+                        <p class="text-secondary small mb-3 flex-grow-1">
+                            Automated CVE checks, patch verifications, dependency scanners, and auditing suites.
+                        </p>
+                        <a href="{{ url_for('store.product_list') }}" class="btn btn-outline-cs btn-sm mt-auto">Browse</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="cs-glass-card h-100 p-4 d-flex flex-column cs-card-interactive">
+                        <div class="brand-icon text-info mb-3" style="border-color: rgba(0,176,255,0.4); background: rgba(0,176,255,0.1);">
+                            <i class="bi bi-key-fill"></i>
+                        </div>
+                        <h3 class="h5 fw-bold text-white mb-2">Data Encryption</h3>
+                        <p class="text-secondary small mb-3 flex-grow-1">
+                            Key vault managers, cryptographic file protection, and data privacy software.
+                        </p>
+                        <a href="{{ url_for('store.product_list') }}" class="btn btn-outline-cs btn-sm mt-auto">Browse</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="cs-glass-card h-100 p-4 d-flex flex-column cs-card-interactive">
+                        <div class="brand-icon text-success mb-3" style="border-color: rgba(0,230,118,0.4); background: rgba(0,230,118,0.1);">
+                            <i class="bi bi-cpu-fill"></i>
+                        </div>
+                        <h3 class="h5 fw-bold text-white mb-2">System Protection</h3>
+                        <p class="text-secondary small mb-3 flex-grow-1">
+                            Endpoint defense agents, rootkit hunters, integrity monitors, and access controllers.
+                        </p>
+                        <a href="{{ url_for('store.product_list') }}" class="btn btn-outline-cs btn-sm mt-auto">Browse</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

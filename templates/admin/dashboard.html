@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard — CYBERSEC STORE{% endblock %}
+
+{% block content %}
+<div class="container py-4 position-relative z-2">
+
+  <!-- Admin Title Banner -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 pb-3 border-bottom border-secondary border-opacity-25">
+    <div>
+      <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-2 border border-danger border-opacity-40"
+           style="background: rgba(255, 51, 102, 0.08); color: #ff3366; font-size: 0.8rem; font-family: var(--font-mono);">
+        <i class="bi bi-shield-lock-fill"></i>
+        <span>ADMINISTRATOR CONSOLE</span>
+      </div>
+      <h1 class="h2 fw-bold text-white mb-1">Admin Dashboard</h1>
+      <p class="text-secondary small mb-0">System metrics, product catalog, customer accounts, and order fulfillment.</p>
+    </div>
+    <div class="d-flex gap-2">
+      <span class="badge bg-secondary bg-opacity-25 border border-secondary text-secondary font-monospace px-3 py-2">
+        <i class="bi bi-shield-check text-success me-1"></i>SECURE CONSOLE
+      </span>
+    </div>
+  </div>
+
+  <!-- Telemetry Metrics Grid -->
+  <div class="row g-3 mb-4">
+    <!-- Total Customers -->
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="cs-glass-card p-3 text-center h-100">
+        <div class="text-secondary small font-monospace mb-1"><i class="bi bi-people-fill text-info me-1"></i>CUSTOMERS</div>
+        <div class="fs-2 fw-bold text-white font-monospace" id="statCustomers">{{ total_customers }}</div>
+        <span class="text-secondary" style="font-size: 0.75rem;">Registered Users</span>
+      </div>
+    </div>
+
+    <!-- Total Products -->
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="cs-glass-card p-3 text-center h-100">
+        <div class="text-secondary small font-monospace mb-1"><i class="bi bi-box-seam-fill text-cs-accent me-1"></i>PRODUCTS</div>
+        <div class="fs-2 fw-bold text-cs-accent font-monospace" id="statProducts">{{ total_products }}</div>
+        <span class="text-secondary" style="font-size: 0.75rem;">Catalog Items</span>
+      </div>
+    </div>
+
+    <!-- Total Categories -->
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="cs-glass-card p-3 text-center h-100">
+        <div class="text-secondary small font-monospace mb-1"><i class="bi bi-tags-fill text-info me-1"></i>CATEGORIES</div>
+        <div class="fs-2 fw-bold text-white font-monospace" id="statCategories">{{ total_categories }}</div>
+        <span class="text-secondary" style="font-size: 0.75rem;">Tool Categories</span>
+      </div>
+    </div>
+
+    <!-- Total Orders -->
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="cs-glass-card p-3 text-center h-100">
+        <div class="text-secondary small font-monospace mb-1"><i class="bi bi-receipt text-warning me-1"></i>ORDERS</div>
+        <div class="fs-2 fw-bold text-warning font-monospace" id="statOrders">{{ total_orders }}</div>
+        <span class="text-secondary" style="font-size: 0.75rem;">Total Transactions</span>
+      </div>
+    </div>
+
+    <!-- Total Revenue -->
+    <div class="col-12 col-md-8 col-lg-4">
+      <div class="cs-glass-card p-3 text-center h-100 border border-success border-opacity-25">
+        <div class="text-secondary small font-monospace mb-1"><i class="bi bi-currency-rupee text-success me-1"></i>TOTAL REVENUE</div>
+        <div class="fs-2 fw-bold text-success font-monospace" id="statRevenue">₹{{ "%.2f"|format(total_revenue) }}</div>
+        <span class="text-secondary" style="font-size: 0.75rem;">Non-Cancelled Orders</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Management Shortcuts Toolbar -->
+  <div class="cs-glass-card p-3 mb-4 d-flex flex-wrap gap-2 align-items-center">
+    <span class="text-secondary small font-monospace me-2"><i class="bi bi-gear me-1"></i>QUICK MANAGEMENT:</span>
+    <a href="{{ url_for('admin.products') }}" class="btn btn-outline-cs btn-sm" id="dashGoProducts">
+      <i class="bi bi-box-seam me-1"></i>Products
+    </a>
+    <a href="{{ url_for('admin.categories') }}" class="btn btn-outline-cs btn-sm" id="dashGoCategories">
+      <i class="bi bi-tags me-1"></i>Categories
+    </a>
+    <a href="{{ url_for('admin.orders') }}" class="btn btn-outline-cs btn-sm" id="dashGoOrders">
+      <i class="bi bi-receipt me-1"></i>Orders
+    </a>
+    <a href="{{ url_for('admin.customers') }}" class="btn btn-outline-cs btn-sm" id="dashGoCustomers">
+      <i class="bi bi-people me-1"></i>Customers
+    </a>
+  </div>
+
+  <!-- Recent Orders Table -->
+  <div class="cs-glass-card p-3 p-md-4">
+    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-clock-history text-cs-accent fs-5"></i>
+        <h2 class="h5 text-white fw-bold mb-0">Recent Orders</h2>
+      </div>
+      <a href="{{ url_for('admin.orders') }}" class="text-cs-accent small text-decoration-none">
+        View All Orders <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+
+    {% if recent_orders %}
+    <div class="table-responsive">
+      <table class="table align-middle mb-0" id="recentOrdersTable">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Timestamp</th>
+            <th>Total Value</th>
+            <th>Status</th>
+            <th style="width: 120px;" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in recent_orders %}
+          <tr>
+            <td class="font-monospace fw-bold text-white">#{{ o.id }}</td>
+            <td class="text-light fw-medium">{{ o.customer_name }}</td>
+            <td class="font-monospace text-secondary small">{{ o.order_date }}</td>
+            <td class="font-monospace text-cs-accent fw-bold">₹{{ "%.2f"|format(o.total_amount) }}</td>
+            <td>
+              <span class="badge-status badge-status-{{ o.status|lower }}">
+                {{ o.status }}
+              </span>
+            </td>
+            <td class="text-end">
+              <a href="{{ url_for('admin.order_detail', order_id=o.id) }}"
+                 class="btn btn-outline-cs btn-sm py-1 px-2" id="dashViewOrder{{ o.id }}">
+                <i class="bi bi-eye me-1"></i>Inspect
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="p-4 text-center text-secondary small">
+      <i class="bi bi-inbox fs-3 d-block mb-2 text-muted"></i>
+      No transaction records logged in the repository yet.
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

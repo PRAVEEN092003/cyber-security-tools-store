@@ -1,0 +1,804 @@
+/* =============================================================================
+   style.css — Cyber Security Tools Store
+   Stage 7: Final Premium UI/UX Cybersecurity SaaS Theme
+   Designed for high aesthetic impact, glassmorphism, responsive fidelity,
+   and smooth performance.
+============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   1. DESIGN TOKENS & ROOT VARIABLES
+----------------------------------------------------------------------------- */
+:root {
+    /* Palette: Deep Obsidian, Space Navy & Cyber Glow */
+    --cs-bg-obsidian:     #050811;       /* Deepest background */
+    --cs-bg-primary:      #080d1a;       /* Primary canvas */
+    --cs-bg-secondary:    #0d1629;       /* Secondary surfaces */
+    --cs-bg-card:         rgba(13, 22, 41, 0.72); /* Glass card background */
+    --cs-bg-card-hover:   rgba(18, 31, 58, 0.85);
+    --cs-bg-glass:        rgba(15, 25, 48, 0.55);
+    --cs-bg-glass-strong: rgba(10, 18, 35, 0.90);
+
+    /* Cyber Accents */
+    --cs-cyan:            #00f0ff;       /* Primary cyber neon cyan */
+    --cs-cyan-glow:       rgba(0, 240, 255, 0.25);
+    --cs-cyan-glow-subtle:rgba(0, 240, 255, 0.08);
+    --cs-blue:            #0070f3;       /* Electric blue */
+    --cs-blue-glow:       rgba(0, 112, 243, 0.25);
+    --cs-purple:          #9d4edd;       /* Cyber violet accent */
+    --cs-purple-glow:     rgba(157, 78, 221, 0.20);
+    
+    /* Legacy aliases for backward compatibility */
+    --cs-accent:          #00f0ff;
+    --cs-accent-dark:     #00bcd4;
+    --cs-accent-glow:     rgba(0, 240, 255, 0.20);
+
+    /* Status Colors */
+    --cs-success:         #00e676;
+    --cs-success-glow:    rgba(0, 230, 118, 0.20);
+    --cs-warning:         #ffb300;
+    --cs-warning-glow:    rgba(255, 179, 0, 0.20);
+    --cs-danger:          #ff3366;
+    --cs-danger-glow:     rgba(255, 51, 102, 0.20);
+    --cs-info:            #00b0ff;
+
+    /* Borders */
+    --cs-border:          rgba(0, 240, 255, 0.12);
+    --cs-border-light:    rgba(255, 255, 255, 0.08);
+    --cs-border-hover:    rgba(0, 240, 255, 0.40);
+    --cs-border-glow:     rgba(0, 240, 255, 0.60);
+
+    /* Typography */
+    --cs-text-primary:    #f0f4fc;       /* Bright readable text */
+    --cs-text-secondary:  #94a3b8;       /* Slate muted text */
+    --cs-text-muted:      #64748b;       /* Subtle meta */
+    --cs-text-cyan:       #38bdf8;
+
+    --font-body:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-heading:       'Space Grotesk', sans-serif;
+    --font-mono:          'JetBrains Mono', 'Fira Code', monospace;
+
+    /* Sizing & Radius */
+    --nav-height:         74px;
+    --radius-sm:          8px;
+    --radius-md:          14px;
+    --radius-lg:          20px;
+    --radius-xl:          28px;
+    --radius-pill:        9999px;
+
+    /* Shadows & Elevation */
+    --shadow-sm:          0 2px 8px rgba(0, 0, 0, 0.4);
+    --shadow-md:          0 6px 20px rgba(0, 0, 0, 0.5);
+    --shadow-lg:          0 12px 35px rgba(0, 0, 0, 0.65), 0 0 25px rgba(0, 240, 255, 0.08);
+    --shadow-cyan-glow:   0 0 25px rgba(0, 240, 255, 0.25);
+    --shadow-card:        0 10px 30px -10px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(0, 240, 255, 0.1);
+    --shadow-card-hover:  0 20px 45px -10px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 240, 255, 0.2);
+
+    /* Transitions */
+    --transition-fast:    180ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base:    280ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow:    450ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* -----------------------------------------------------------------------------
+   2. GLOBAL RESET & BASE STYLING
+----------------------------------------------------------------------------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    overflow-x: clip;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--cs-bg-obsidian);
+    background-image: radial-gradient(circle at 50% 0%, rgba(0, 112, 243, 0.07) 0%, transparent 60%);
+    color: var(--cs-text-primary);
+    line-height: 1.65;
+    font-size: 15.5px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: clip;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Main page container */
+main, .main-content {
+    flex: 1 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
+}
+
+/* Custom Cyber Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--cs-bg-obsidian);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 240, 255, 0.20);
+    border-radius: var(--radius-pill);
+    border: 2px solid var(--cs-bg-obsidian);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--cs-cyan);
+}
+
+/* Typography Defaults */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--cs-text-primary);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+}
+
+a {
+    color: var(--cs-cyan);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+a:hover {
+    color: #ffffff;
+}
+
+/* -----------------------------------------------------------------------------
+   3. CLEAN CARD & SURFACE STYLING
+----------------------------------------------------------------------------- */
+.cs-glass-card {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.cs-glass-card:hover {
+    border-color: rgba(0, 240, 255, 0.35);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+
+.cs-card-interactive:hover {
+    transform: translateY(-3px);
+}
+
+.cs-glass-panel {
+    background: var(--cs-bg-glass);
+    border: 1px solid var(--cs-border-light);
+    border-radius: var(--radius-md);
+}
+
+/* -----------------------------------------------------------------------------
+   5. BUTTONS & INTERACTIVE ELEMENTS
+----------------------------------------------------------------------------- */
+.btn-cs {
+    background: linear-gradient(135deg, #00f0ff 0%, #0070f3 100%);
+    color: #ffffff !important;
+    border: none;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 0.65rem 1.4rem;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 4px 18px rgba(0, 112, 243, 0.35);
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all var(--transition-base);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    z-index: 1;
+}
+
+.btn-cs::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+    z-index: -1;
+}
+
+.btn-cs:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 240, 255, 0.45);
+    color: #ffffff !important;
+}
+
+.btn-cs:hover::after {
+    left: 140%;
+}
+
+.btn-cs:active {
+    transform: translateY(0);
+}
+
+.btn-outline-cs {
+    background: rgba(0, 240, 255, 0.04);
+    color: var(--cs-cyan) !important;
+    border: 1px solid var(--cs-border-hover);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 0.65rem 1.4rem;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all var(--transition-base);
+    backdrop-filter: blur(8px);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.btn-outline-cs:hover {
+    background: rgba(0, 240, 255, 0.14);
+    border-color: var(--cs-cyan);
+    color: #ffffff !important;
+    transform: translateY(-2px) translateZ(0);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+}
+
+.btn-outline-cs:active {
+    transform: translateY(0);
+}
+
+.btn-cyber-danger {
+    background: rgba(255, 51, 102, 0.1);
+    color: #ff3366 !important;
+    border: 1px solid rgba(255, 51, 102, 0.3);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-base);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.btn-cyber-danger:hover {
+    background: #ff3366;
+    color: #ffffff !important;
+    box-shadow: 0 0 20px rgba(255, 51, 102, 0.4);
+    transform: translateY(-2px) translateZ(0);
+}
+
+/* -----------------------------------------------------------------------------
+   6. GLOBAL NAVBAR
+----------------------------------------------------------------------------- */
+.cs-navbar {
+    background: rgba(5, 8, 17, 0.82);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--cs-border);
+    height: var(--nav-height);
+    transition: all var(--transition-base);
+    z-index: 1040;
+}
+
+.cs-navbar.scrolled {
+    background: rgba(5, 8, 17, 0.94);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 240, 255, 0.1);
+    border-bottom-color: rgba(0, 240, 255, 0.25);
+}
+
+.cs-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.cs-brand:hover {
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+}
+
+.brand-icon {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 112, 243, 0.3));
+    border: 1px solid var(--cs-cyan);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cs-cyan);
+    font-size: 1.25rem;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+    transition: all var(--transition-base);
+}
+
+.cs-brand:hover .brand-icon {
+    transform: rotate(5deg) scale(1.05);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
+}
+
+.brand-accent {
+    color: var(--cs-cyan);
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+}
+
+/* Nav links */
+.cs-navbar .nav-link {
+    color: var(--cs-text-secondary);
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.cs-navbar .nav-link:hover {
+    color: var(--cs-cyan);
+    background: rgba(0, 240, 255, 0.06);
+}
+
+.cs-navbar .nav-link.active {
+    color: #ffffff;
+    background: rgba(0, 240, 255, 0.12);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+}
+
+/* Dropdown Menu */
+.dropdown-menu-dark {
+    background: rgba(10, 16, 32, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--cs-border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 240, 255, 0.1);
+    padding: 0.5rem;
+}
+
+.dropdown-item {
+    color: var(--cs-text-secondary);
+    border-radius: var(--radius-sm);
+    padding: 0.55rem 1rem;
+    transition: all var(--transition-fast);
+    font-size: 0.9rem;
+}
+
+.dropdown-item:hover {
+    background: rgba(0, 240, 255, 0.12);
+    color: #ffffff;
+    padding-left: 1.25rem;
+}
+
+/* Cart Badge */
+.cart-badge-pulse {
+    animation: cartPulse 2s infinite ease-in-out;
+}
+@keyframes cartPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.5); }
+    50% { box-shadow: 0 0 0 6px rgba(255, 51, 102, 0); }
+}
+
+/* -----------------------------------------------------------------------------
+   7. FLASH MESSAGES & SYSTEM ALERTS
+----------------------------------------------------------------------------- */
+.cs-flash-container {
+    position: relative;
+    z-index: 1030;
+    margin-top: 1.25rem;
+}
+
+.cs-flash-alert {
+    background: rgba(13, 22, 41, 0.92);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--cs-border);
+    border-radius: var(--radius-md);
+    color: var(--cs-text-primary);
+    padding: 1rem 1.4rem;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: flashSlideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes flashSlideDown {
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.cs-flash-alert.alert-success {
+    border-color: rgba(0, 230, 118, 0.4);
+    box-shadow: 0 0 20px rgba(0, 230, 118, 0.15);
+}
+.cs-flash-alert.alert-danger, .cs-flash-alert.alert-error {
+    border-color: rgba(255, 51, 102, 0.4);
+    box-shadow: 0 0 20px rgba(255, 51, 102, 0.15);
+}
+.cs-flash-alert.alert-warning {
+    border-color: rgba(255, 179, 0, 0.4);
+    box-shadow: 0 0 20px rgba(255, 179, 0, 0.15);
+}
+.cs-flash-alert.alert-info {
+    border-color: rgba(0, 176, 255, 0.4);
+    box-shadow: 0 0 20px rgba(0, 176, 255, 0.15);
+}
+
+/* -----------------------------------------------------------------------------
+   8. FORM CONTROLS & INPUTS
+----------------------------------------------------------------------------- */
+.form-control, .form-select {
+    background-color: rgba(10, 17, 33, 0.8) !important;
+    border: 1px solid rgba(0, 240, 255, 0.18) !important;
+    color: #f1f5f9 !important;
+    border-radius: var(--radius-sm);
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+    transition: all var(--transition-fast);
+}
+
+.form-control::placeholder {
+    color: #475569;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: rgba(13, 22, 42, 0.95) !important;
+    border-color: var(--cs-cyan) !important;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.25) !important;
+    color: #ffffff !important;
+    outline: none;
+}
+
+/* Unified focus-within for cyber input groups with icon & password toggle buttons */
+.input-group:focus-within {
+    box-shadow: 0 0 16px rgba(0, 240, 255, 0.22);
+    border-radius: var(--radius-sm);
+}
+
+.input-group:focus-within .input-group-text,
+.input-group:focus-within .toggle-password-btn {
+    border-color: var(--cs-cyan) !important;
+    color: var(--cs-cyan) !important;
+}
+
+.input-group:focus-within .form-control {
+    border-color: var(--cs-cyan) !important;
+    box-shadow: none !important;
+}
+
+.toggle-password-btn {
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.toggle-password-btn:hover {
+    color: var(--cs-cyan) !important;
+}
+
+.form-label {
+    color: #cbd5e1;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+}
+
+/* -----------------------------------------------------------------------------
+   9. TABLES (ORDERS, ADMIN, PRODUCTS, CART)
+----------------------------------------------------------------------------- */
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--cs-text-primary);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.table > thead {
+    background: rgba(10, 17, 33, 0.9);
+    border-bottom: 2px solid var(--cs-border);
+}
+
+.table > thead th {
+    font-family: var(--font-heading);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--cs-cyan);
+    padding: 1rem 0.9rem;
+    font-weight: 700;
+}
+
+.table > tbody > tr {
+    transition: background-color var(--transition-fast);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.table > tbody > tr:hover {
+    background-color: rgba(0, 240, 255, 0.04);
+}
+
+.table > tbody td {
+    padding: 1rem 0.9rem;
+    vertical-align: middle;
+}
+
+/* -----------------------------------------------------------------------------
+   10. STATUS BADGES & TAGS
+----------------------------------------------------------------------------- */
+.badge-status {
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.badge-status::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.badge-status-pending {
+    background: rgba(255, 179, 0, 0.12);
+    color: #ffb300;
+    border: 1px solid rgba(255, 179, 0, 0.35);
+}
+.badge-status-pending::before { background: #ffb300; box-shadow: 0 0 6px #ffb300; }
+
+.badge-status-confirmed {
+    background: rgba(0, 176, 255, 0.12);
+    color: #00b0ff;
+    border: 1px solid rgba(0, 176, 255, 0.35);
+}
+.badge-status-confirmed::before { background: #00b0ff; box-shadow: 0 0 6px #00b0ff; }
+
+.badge-status-processing {
+    background: rgba(157, 78, 221, 0.12);
+    color: #c77dff;
+    border: 1px solid rgba(157, 78, 221, 0.35);
+}
+.badge-status-processing::before { background: #c77dff; box-shadow: 0 0 6px #c77dff; }
+
+.badge-status-completed {
+    background: rgba(0, 230, 118, 0.12);
+    color: #00e676;
+    border: 1px solid rgba(0, 230, 118, 0.35);
+}
+.badge-status-completed::before { background: #00e676; box-shadow: 0 0 6px #00e676; }
+
+.badge-status-cancelled {
+    background: rgba(255, 51, 102, 0.12);
+    color: #ff3366;
+    border: 1px solid rgba(255, 51, 102, 0.35);
+}
+.badge-status-cancelled::before { background: #ff3366; box-shadow: 0 0 6px #ff3366; }
+
+/* -----------------------------------------------------------------------------
+   11. HERO & LANDING PAGE COMPONENTS
+----------------------------------------------------------------------------- */
+.cs-hero {
+    position: relative;
+    padding: 4.5rem 0 3.5rem;
+}
+
+.hero-title {
+    font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    color: var(--cs-text-secondary);
+    max-width: 620px;
+    line-height: 1.7;
+}
+
+/* -----------------------------------------------------------------------------
+   12. PRODUCT CARDS & SHOWCASE
+----------------------------------------------------------------------------- */
+.cs-product-card {
+    background: var(--cs-bg-card);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--cs-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.cs-product-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--cs-border-hover);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.cs-product-media {
+    position: relative;
+    height: 190px;
+    background: rgba(5, 8, 17, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+}
+
+.cs-product-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.cs-product-card:hover .cs-product-media img {
+    transform: scale(1.08);
+}
+
+.cs-product-placeholder-icon {
+    font-size: 3.5rem;
+    color: rgba(0, 240, 255, 0.35);
+    transition: transform var(--transition-base), color var(--transition-base);
+}
+
+.cs-product-card:hover .cs-product-placeholder-icon {
+    transform: scale(1.1);
+    color: var(--cs-cyan);
+}
+
+.cs-product-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+}
+
+.cs-product-body {
+    padding: 1.25rem;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.cs-product-price {
+    font-family: var(--font-heading);
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: var(--cs-cyan);
+    text-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
+}
+
+/* -----------------------------------------------------------------------------
+   13. FOOTER
+----------------------------------------------------------------------------- */
+.cs-footer {
+    background: rgba(4, 7, 14, 0.95);
+    border-top: 1px solid var(--cs-border);
+    padding: 4rem 0 2rem;
+    margin-top: auto;
+    position: relative;
+    z-index: 2;
+}
+
+.cs-footer a {
+    color: var(--cs-text-secondary);
+}
+
+.cs-footer a:hover {
+    color: var(--cs-cyan);
+}
+
+.footer-system-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.85rem;
+    background: rgba(0, 230, 118, 0.08);
+    border: 1px solid rgba(0, 230, 118, 0.3);
+    border-radius: var(--radius-pill);
+    color: var(--cs-success);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+}
+
+/* -----------------------------------------------------------------------------
+   14. ACCESSIBILITY & PREFERS-REDUCED-MOTION
+----------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    #cyberCanvas {
+        opacity: 0.2;
+    }
+}
+
+/* -----------------------------------------------------------------------------
+   15. RESPONSIVE UTILITIES
+----------------------------------------------------------------------------- */
+@media (max-width: 991.98px) {
+    .cs-navbar {
+        height: auto;
+        padding: 0.8rem 0;
+    }
+    .cs-navbar .navbar-collapse {
+        background: rgba(8, 13, 26, 0.98);
+        border: 1px solid var(--cs-border);
+        border-radius: var(--radius-md);
+        padding: 1.25rem;
+        margin-top: 0.75rem;
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85);
+    }
+    .cs-navbar .nav-link {
+        padding: 0.7rem 1rem !important;
+        min-height: 44px;
+    }
+    .cs-navbar .dropdown-menu {
+        border: 1px solid rgba(0, 240, 255, 0.15);
+        background: rgba(13, 22, 41, 0.95);
+        margin-top: 0.4rem;
+        padding: 0.5rem;
+    }
+    .hero-title {
+        font-size: 2.2rem;
+    }
+    .hero-description {
+        font-size: 1rem;
+    }
+    .cs-footer {
+        padding: 3rem 0 1.5rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .hero-title {
+        font-size: 1.85rem;
+    }
+    .hero-pill-badge {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.75rem;
+    }
+    .btn-cs, .btn-outline-cs {
+        width: 100%;
+        justify-content: center;
+    }
+    .cs-glass-card {
+        padding: 1.25rem !important;
+    }
+}

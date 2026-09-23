@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block title %}Create Account — CYBER SECURITY TOOLS{% endblock %}
+
+{% block content %}
+<div class="container py-5 position-relative z-2" style="max-width: 520px;">
+
+    <!-- Centered Cyber Registration Glass Card -->
+    <div class="cs-glass-card p-4 p-md-5" style="border-color: rgba(0, 240, 255, 0.28);">
+
+        <!-- Header Shield Graphic -->
+        <div class="text-center mb-4">
+            <div class="brand-icon mx-auto mb-3" style="width: 54px; height: 54px; font-size: 1.7rem; background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(157, 78, 221, 0.3));">
+                <i class="bi bi-person-badge-fill"></i>
+            </div>
+            <h1 class="h3 fw-bold text-white mb-1">Operator Enrollment</h1>
+            <p class="text-secondary small font-monospace mb-0">ENROLL VERIFIED CUSTOMER PROFILE</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.register') }}" novalidate id="registerForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <!-- Full Name -->
+            <div class="mb-3">
+                <label for="registerName" class="form-label font-monospace small text-cs-accent">
+                    <i class="bi bi-person me-1"></i>FULL NAME
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-end-0 text-secondary" style="border-color: rgba(0, 240, 255, 0.18);">
+                        <i class="bi bi-card-heading"></i>
+                    </span>
+                    <input
+                        type="text"
+                        class="form-control border-start-0 ps-0"
+                        id="registerName"
+                        name="name"
+                        value="{{ form_name }}"
+                        required
+                        autocomplete="name"
+                        placeholder="Alex Vance"
+                    />
+                </div>
+            </div>
+
+            <!-- Email Address -->
+            <div class="mb-3">
+                <label for="registerEmail" class="form-label font-monospace small text-cs-accent">
+                    <i class="bi bi-envelope-at me-1"></i>SECURE EMAIL
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-end-0 text-secondary" style="border-color: rgba(0, 240, 255, 0.18);">
+                        <i class="bi bi-at"></i>
+                    </span>
+                    <input
+                        type="email"
+                        class="form-control border-start-0 ps-0"
+                        id="registerEmail"
+                        name="email"
+                        value="{{ form_email }}"
+                        required
+                        autocomplete="email"
+                        placeholder="alex@defense.org"
+                    />
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label for="registerPassword" class="form-label font-monospace small text-cs-accent">
+                    <i class="bi bi-key-fill me-1"></i>PASSPHRASE (MIN 8 CHARS)
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-end-0 text-secondary" style="border-color: rgba(0, 240, 255, 0.18);">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                    <input
+                        type="password"
+                        class="form-control border-start-0 border-end-0 ps-0"
+                        id="registerPassword"
+                        name="password"
+                        required
+                        autocomplete="new-password"
+                        placeholder="••••••••••••"
+                    />
+                    <button class="btn btn-outline-secondary border-start-0 text-secondary bg-transparent toggle-password-btn"
+                            type="button" style="border-color: rgba(0, 240, 255, 0.18);" tabindex="-1" aria-label="Toggle password visibility">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+                <!-- Visual-only password strength indicator -->
+                <div class="progress mt-2" style="height: 4px; background: rgba(255,255,255,0.08);">
+                    <div id="passwordStrengthBar" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="mb-4">
+                <label for="registerConfirmPassword" class="form-label font-monospace small text-cs-accent">
+                    <i class="bi bi-shield-check me-1"></i>VERIFY PASSPHRASE
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-end-0 text-secondary" style="border-color: rgba(0, 240, 255, 0.18);">
+                        <i class="bi bi-check2-circle"></i>
+                    </span>
+                    <input
+                        type="password"
+                        class="form-control border-start-0 border-end-0 ps-0"
+                        id="registerConfirmPassword"
+                        name="confirm_password"
+                        required
+                        autocomplete="new-password"
+                        placeholder="••••••••••••"
+                    />
+                    <button class="btn btn-outline-secondary border-start-0 text-secondary bg-transparent toggle-password-btn"
+                            type="button" style="border-color: rgba(0, 240, 255, 0.18);" tabindex="-1" aria-label="Toggle password visibility">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-cs btn-lg" id="registerSubmit">
+                    <i class="bi bi-person-plus-fill me-1"></i>Initialize Profile
+                </button>
+            </div>
+        </form>
+
+        <div class="text-center mt-4 pt-3 border-top border-secondary border-opacity-25">
+            <p class="text-secondary small mb-0">
+                Already registered in database?
+                <a href="{{ url_for('auth.login') }}" class="text-cs-accent fw-semibold" id="goToLogin">Sign In Here</a>
+            </p>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Gentle cosmetic strength indicator (does not alter or block submission)
+    const pwInput = document.getElementById('registerPassword');
+    const bar = document.getElementById('passwordStrengthBar');
+    if (pwInput && bar) {
+        pwInput.addEventListener('input', () => {
+            const val = pwInput.value;
+            let score = 0;
+            if (val.length >= 8) score += 40;
+            if (/[A-Z]/.test(val)) score += 20;
+            if (/[0-9]/.test(val)) score += 20;
+            if (/[^A-Za-z0-9]/.test(val)) score += 20;
+            bar.style.width = Math.min(score, 100) + '%';
+            if (score < 40) bar.className = 'progress-bar bg-danger';
+            else if (score < 80) bar.className = 'progress-bar bg-warning';
+            else bar.className = 'progress-bar bg-success';
+        });
+    }
+</script>
+{% endblock %}

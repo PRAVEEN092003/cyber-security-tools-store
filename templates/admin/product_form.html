@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Product — Admin Console{% endblock %}
+{% block content %}
+<div class="container py-4 position-relative z-2" style="max-width: 780px;">
+
+  <!-- Header -->
+  <div class="mb-4">
+    <div class="hero-pill-badge mb-2 py-1 px-3">
+      <i class="bi bi-box-seam"></i>
+      <span>PRODUCT CONFIGURATION</span>
+    </div>
+    <h1 class="h2 fw-bold text-white mb-1">{{ action }} Product Asset</h1>
+    <p class="text-secondary small mb-0">Fill out specifications, licensing terms, and media for catalogue deployment.</p>
+  </div>
+
+  <div class="cs-glass-card p-4 p-md-5">
+    <form method="POST" enctype="multipart/form-data" id="productForm">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <!-- Product Name -->
+      <div class="mb-3">
+        <label for="prodName" class="form-label font-monospace small text-cs-accent">
+          PRODUCT TITLE <span class="text-danger">*</span>
+        </label>
+        <input type="text" class="form-control" id="prodName" name="name"
+               value="{{ form.name if form.name is defined else '' }}" required autofocus
+               placeholder="e.g. NetSentry Deep Packet Inspector">
+      </div>
+
+      <!-- Category Selection -->
+      <div class="mb-3">
+        <label for="prodCategory" class="form-label font-monospace small text-cs-accent">
+          SECURITY SECTOR / CATEGORY <span class="text-danger">*</span>
+        </label>
+        <select class="form-select" id="prodCategory" name="category_id" required>
+          <option value="">— Select Category Domain —</option>
+          {% for cat in categories %}
+          <option value="{{ cat.id }}"
+            {% if (form.category_id is defined and form.category_id|string == cat.id|string) %}selected{% endif %}>
+            {{ cat.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Price & Stock Grid -->
+      <div class="row g-3 mb-3">
+        <div class="col-sm-6">
+          <label for="prodPrice" class="form-label font-monospace small text-cs-accent">
+            LICENSE PRICE (INR) <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text bg-transparent border-end-0 text-secondary" style="border-color: rgba(0, 240, 255, 0.18);">₹</span>
+            <input type="number" step="0.01" min="0" class="form-control border-start-0 ps-0" id="prodPrice" name="price"
+                   value="{{ form.price if form.price is defined else '' }}" required placeholder="149.00">
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <label for="prodStock" class="form-label font-monospace small text-cs-accent">
+            INVENTORY STOCK <span class="text-danger">*</span>
+          </label>
+          <input type="number" min="0" class="form-control" id="prodStock" name="stock"
+                 value="{{ form.stock if form.stock is defined else '0' }}" required>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="mb-3">
+        <label for="prodDesc" class="form-label font-monospace small text-cs-accent">OVERVIEW &amp; CAPABILITIES</label>
+        <textarea class="form-control" id="prodDesc" name="description" rows="3"
+                  placeholder="Detailed explanation of the cybersecurity tool...">{{ form.description if form.description is defined else '' }}</textarea>
+      </div>
+
+      <!-- Features (Multiline) -->
+      <div class="mb-3">
+        <label for="prodFeatures" class="form-label font-monospace small text-cs-accent">KEY INTEL &amp; TECHNICAL FEATURES</label>
+        <textarea class="form-control font-monospace" id="prodFeatures" name="features" rows="3"
+                  placeholder="One feature per line:&#10;• Real-time DPI kernel inspection&#10;• Automated MITRE ATT&CK mapping&#10;• Zero-day heuristic engine">{{ form.features if form.features is defined else '' }}</textarea>
+        <div class="form-text text-secondary small">Line breaks are safely preserved in technical specifications.</div>
+      </div>
+
+      <!-- License & Compatibility Grid -->
+      <div class="row g-3 mb-3">
+        <div class="col-sm-6">
+          <label for="prodLicense" class="form-label font-monospace small text-cs-accent">LICENSING MODEL</label>
+          <input type="text" class="form-control" id="prodLicense" name="license"
+                 value="{{ form.license if form.license is defined else '' }}" placeholder="e.g. Perpetual Enterprise, Annual">
+        </div>
+        <div class="col-sm-6">
+          <label for="prodCompatibility" class="form-label font-monospace small text-cs-accent">SYSTEM TARGETS</label>
+          <input type="text" class="form-control" id="prodCompatibility" name="compatibility"
+                 value="{{ form.compatibility if form.compatibility is defined else '' }}" placeholder="e.g. Linux x86_64, Windows Server, Docker">
+        </div>
+      </div>
+
+      <!-- Media Upload -->
+      <div class="mb-4">
+        <label for="prodImage" class="form-label font-monospace small text-cs-accent">ASSET IMAGE</label>
+        {% if product and product.image %}
+        <div class="mb-2 p-2 rounded d-flex align-items-center gap-3" style="background: rgba(5,8,17,0.6); border: 1px solid rgba(0,240,255,0.15);">
+          <img src="{{ url_for('static', filename='images/products/' ~ product.image) }}"
+               alt="Current image" style="height: 60px; border-radius: 6px; object-fit: cover;">
+          <span class="text-secondary small font-monospace">Current image active. Upload new file below to overwrite.</span>
+        </div>
+        {% endif %}
+        <input type="file" class="form-control" id="prodImage" name="image"
+               accept=".png,.jpg,.jpeg,.webp">
+        <div class="form-text text-secondary small">Supported formats: PNG, JPG, JPEG, WEBP. Maximum file size: 8 MB.</div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex gap-3 pt-3 border-top border-secondary border-opacity-25">
+        <button type="submit" class="btn btn-cs" id="saveProductBtn">
+          <i class="bi bi-check-circle-fill me-1"></i>Commit {{ action }} Product
+        </button>
+        <a href="{{ url_for('admin.products') }}" class="btn btn-outline-cs" id="cancelProductBtn">
+          Abort
+        </a>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}
